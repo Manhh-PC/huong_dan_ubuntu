@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Hướng dẫn cài và chạy PixelNote bằng Ubuntu WSL hoặc PowerShell với XAMPP và MySQL Workbench."><title>Hướng dẫn PixelNote trên máy mới</title><style>
+:root{--ink:#172538;--muted:#57677a;--accent:#2757b6;--line:#dce3ec;--soft:#f4f7fb;--paper:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:115px}body{margin:0;color:var(--ink);background:var(--soft);font:16px/1.7 "Segoe UI",Arial,sans-serif}
+a{color:var(--accent);text-underline-offset:3px;overflow-wrap:anywhere}a:hover{text-decoration:none}button{font:inherit;cursor:pointer}
+.top{position:sticky;top:0;z-index:10;background:#ffffffed;backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{max-width:1310px;margin:auto;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{font-weight:750;font-size:19px;letter-spacing:-.5px}.brand span{display:block;font-size:12px;font-weight:500;letter-spacing:.1px;color:var(--muted)}
+.controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.tabs{display:flex;padding:4px;background:#eef2f7;border-radius:9px;gap:3px}.tabs button{border:0;background:transparent;padding:7px 13px;border-radius:6px;font-size:13px;color:#40526c;font-weight:650}.tabs button[aria-pressed=true]{background:var(--ink);color:#fff}.print{border:1px solid #c9d4e2;background:white;border-radius:7px;padding:7px 12px;font-size:13px}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #e5a23b;outline-offset:3px}
+.layout{max-width:1310px;margin:auto;display:grid;grid-template-columns:245px minmax(0,1fr);gap:36px;padding:30px 24px 70px}
+aside{position:sticky;top:108px;height:calc(100vh - 140px);overflow:auto;padding-right:8px}aside h2{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;margin:0 0 12px;color:var(--muted)}
+nav a{display:flex;gap:10px;padding:8px 9px;text-decoration:none;color:#40526c;font-size:13px;line-height:1.4;border-radius:7px;margin-bottom:3px}nav a span{font-variant-numeric:tabular-nums;color:#8190a4;font-size:11px;padding-top:2px}nav a:hover,nav a.active{background:#e5ecf8;color:#173d86}.progress{font-size:12px;color:var(--muted);border-top:1px solid var(--line);margin-top:18px;padding:15px 9px}
+main{min-width:0}.hero{padding:10px 0 30px}.eyebrow{font-size:12px;color:var(--accent);font-weight:750;letter-spacing:1.4px;text-transform:uppercase;margin:0 0 12px}h1{color:#132038;font-size:38px;line-height:1.17;letter-spacing:-1px;margin:0 0 18px;max-width:770px}
+.subtitle{font-size:18px;color:#4b5d76;margin:0 0 22px}.tags{display:flex;flex-wrap:wrap;gap:8px}.tags span{font-size:12px;background:#e8edf5;color:#40536d;border-radius:5px;padding:4px 9px}
+.intro{margin-bottom:28px}.intro p{margin:0 0 10px}section{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:27px 34px 30px;margin-bottom:24px;scroll-margin-top:112px}.section-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}.step{font-size:13px;font-weight:750;color:var(--accent);font-variant-numeric:tabular-nums}.done{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}.done input{width:16px;height:16px;accent-color:var(--accent)}
+h2{font-size:25px;line-height:1.3;margin:0 0 19px;letter-spacing:-.4px;color:#16243b}h3{font-size:18px;color:#17283f;margin:28px 0 12px;line-height:1.4}
+p{margin:13px 0}strong{font-weight:700;color:#132239}ul,ol{padding-left:25px;margin:13px 0 18px}li{padding-left:4px;margin-bottom:8px}
+.table-wrap{overflow:auto;margin:19px 0 22px}table{width:100%;border-collapse:collapse;table-layout:auto;font-size:14px;line-height:1.55}th,td{border:1px solid #d9dfe8;padding:11px 13px;vertical-align:middle;text-align:left;overflow-wrap:anywhere}th{background:#e9eff8;font-weight:700;color:#1c3456}tbody tr:nth-child(even){background:#f8fafc}td:first-child{min-width:150px}
+.command{margin:18px 0 22px;border:1px solid #d6e0ee;border-radius:8px;overflow:hidden;background:#f6f8fc}.command-head{display:flex;gap:14px;justify-content:space-between;align-items:center;background:#eaf0f8;padding:8px 14px;border-bottom:1px solid #d6e0ee;color:#364d6b;font-size:12px;font-weight:650}.copy{border:1px solid #c7d4e5;border-radius:5px;background:#fff;color:#284a7b;padding:3px 9px;font-size:12px;white-space:nowrap}.copy:hover{background:#f2f6fc}
+pre{margin:0;padding:16px;overflow-x:auto;tab-size:4;font:13px/1.65 Consolas,"Courier New",monospace;color:#162e4f}code{font:inherit}body[data-mode=wsl] .shell-ps{display:none}body[data-mode=ps] .shell-wsl{display:none}
+footer{text-align:left;font-size:12px;color:var(--muted);padding:0 4px}#notice{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#172538;color:white;padding:10px 18px;border-radius:8px;font-size:13px;z-index:30;box-shadow:0 4px 15px #0002}#notice:empty{display:none}
+@media(max-width:1050px){.layout{grid-template-columns:205px minmax(0,1fr);gap:20px}section{padding:24px}h1{font-size:33px}.bar{gap:10px}}
+@media(max-width:780px){.bar{padding:12px 16px;align-items:flex-start}.brand span{display:none}.controls{gap:6px;justify-content:flex-end}.tabs button{padding:7px 9px;font-size:12px}.print{font-size:12px;padding:7px 9px}.layout{display:block;padding:22px 14px 40px}aside{position:static;height:auto;padding:0;margin-bottom:26px}nav{display:flex;overflow:auto;gap:7px;padding-bottom:8px}nav a{flex:0 0 165px;padding:10px;background:#e9eef7}.progress{display:none}section{padding:23px 19px}h1{font-size:31px}h2{font-size:23px}.subtitle{font-size:16px}.table-wrap{font-size:12px}th,td{padding:9px}td:first-child{min-width:120px}}
+@media print{*{box-shadow:none!important}html{scroll-padding-top:0}body{background:#fff;color:#000;font-size:10pt;line-height:1.5}.top,aside,.done,.copy,.tags,#notice{display:none!important}.layout{display:block;padding:0;max-width:none}.hero{padding:0 0 14px}h1{font-size:25pt}.subtitle{font-size:12pt}section{padding:15px 0;border:0;border-radius:0;margin:0;scroll-margin-top:0}h2{font-size:17pt}h3{font-size:13pt}.command{border:1px solid #ccc;break-inside:avoid}.shell{display:block!important}pre{font-size:8.5pt;white-space:pre-wrap;overflow-wrap:anywhere;padding:10px}.command-head{background:#eee;color:#000;font-size:9pt}table{font-size:9pt}thead{display:table-header-group}tr{break-inside:avoid}h2,h3{break-after:avoid}p,li{orphans:3;widows:3}.table-wrap{overflow:visible}a{color:#000}.step{color:#000}footer{margin-top:20px}@page{size:A4;margin:16mm 15mm}}
+</style></head><body><header class="top"><div class="bar"><div class="brand">PixelNote<span>HƯỚNG DẪN THỰC HÀNH</span></div><div class="controls"><div class="tabs" role="group" aria-label="Chọn loại terminal"><button data-mode-button="wsl" aria-pressed="false">Ubuntu WSL</button><button data-mode-button="ps" aria-pressed="false">PowerShell</button><button data-mode-button="all" aria-pressed="true">Cả hai</button></div><button class="print" id="print" title="Bản in bao gồm cả hai loại terminal">In / lưu PDF</button></div></div></header><div class="layout"><aside aria-label="Mục lục"><h2>Nội dung hướng dẫn</h2><nav><a href="#s01"><span>01</span>Trước khi bắt đầu</a><a href="#s02"><span>02</span>Chuẩn bị mã nguồn và terminal</a><a href="#s03"><span>03</span>Kiểm tra MySQL Server và kết nối Workbench</a><a href="#s04"><span>04</span>Kiểm tra PHP và thư mục lưu dữ liệu</a><a href="#s05"><span>05</span>Tạo database và các bảng trong Workbench</a><a href="#s06"><span>06</span>Tạo cấu hình và kiểm tra kết nối của ứng dụng</a><a href="#s07"><span>07</span>Cấu hình Apache của XAMPP</a><a href="#s08"><span>08</span>Mở website và kiểm tra chức năng</a><a href="#s09"><span>09</span>Bật và dừng khi sử dụng hằng ngày</a><a href="#s10"><span>10</span>Chuyển dữ liệu từ máy cũ sang máy mới</a><a href="#s11"><span>11</span>Xử lý các lỗi thường gặp</a><a href="#s12"><span>12</span>Danh sách xác nhận và tài liệu tham khảo</a></nav><div class="progress"><div id="progress-count">0 / 12 mục đã đọc</div><p>Đánh dấu để theo dõi việc đọc. Dấu này không tự xác nhận cài đặt thành công.</p></div></aside><main><div class="hero"><p class="eyebrow">Cài đặt và vận hành trên Windows</p><h1>Chạy PixelNote<br>trên máy mới</h1><p class="subtitle">Hướng dẫn từng bước với Ubuntu WSL và PowerShell</p><div class="tags"><span>MySQL Workbench</span><span>XAMPP Apache và PHP</span><span>Không dùng BAT</span><span>Đọc ngoại tuyến</span></div></div><div class="intro"><p>Ubuntu WSL và PowerShell • MySQL Workbench • XAMPP</p>
+<p>Tài liệu dành cho máy Windows đã cài Ubuntu WSL, Oracle MySQL Server, MySQL Workbench và XAMPP. Bạn sẽ cấu hình dự án thủ công, xem được database trong Workbench và bật hoặc dừng website khi cần. Không cần chạy file BAT.</p>
+<p>Chọn Ubuntu WSL hoặc PowerShell ở thanh công cụ. Mỗi bước chỉ chạy nhóm lệnh của terminal đang dùng. Các bước SQL trong Workbench và các file cấu hình dùng chung.</p></div><section id="s01" aria-labelledby="heading-s01"><div class="section-top"><span class="step">01</span><label class="done"><input type="checkbox" data-done="s01"> Đã đọc mục này</label></div><h2 id="heading-s01">Trước khi bắt đầu</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">Thành phần</th><th scope="col">Vai trò</th></tr></thead><tbody><tr><td>XAMPP Apache và PHP</td><td>Chạy website và xử lý PHP trên Windows</td></tr><tr><td>Oracle MySQL Server</td><td>Lưu database và chạy dưới dạng dịch vụ Windows</td></tr><tr><td>MySQL Workbench</td><td>Công cụ kết nối, xem, tạo và sao lưu database</td></tr><tr><td>Ubuntu WSL hoặc PowerShell</td><td>Terminal để nhập lệnh</td></tr></tbody></table></div>
+<p><strong>Dòng MySQL trong XAMPP sử dụng MariaDB.</strong> Dự án này dùng Oracle MySQL riêng, nên chỉ bật Apache trong XAMPP. Đóng Workbench không dừng MySQL Server. [1]</p>
+<h3>Thông số mẫu trong tài liệu</h3>
+<div class="table-wrap"><table><thead><tr><th scope="col">Thông số</th><th scope="col">Giá trị ví dụ</th></tr></thead><tbody><tr><td>Dự án trên Windows</td><td>C:\Projects\pixelnote</td></tr><tr><td>Cùng thư mục đó trong WSL</td><td>/mnt/c/Projects/pixelnote</td></tr><tr><td>XAMPP</td><td>C:\xampp</td></tr><tr><td>MySQL host</td><td>127.0.0.1</td></tr><tr><td>MySQL port</td><td>3307</td></tr><tr><td>Database</td><td>pixelnote</td></tr><tr><td>Tài khoản ứng dụng</td><td>pixelnote_app</td></tr><tr><td>Dịch vụ MySQL ví dụ</td><td>MySQL80</td></tr><tr><td>Website</td><td><a href="http://localhost/pixelnote/">http://localhost/pixelnote/</a></td></tr></tbody></table></div>
+<p><strong>3307 không phải cổng bắt buộc.</strong> Nếu máy mới đã cấu hình MySQL ở 3306, giữ 3306 và thay 3307 trong kết nối Workbench, config.local.php và các lệnh kiểm tra cổng. Tên dịch vụ MySQL cũng phải lấy theo máy thực tế.</p>
+<p><strong>Cài mới:</strong> thực hiện mục 02 đến 08. <strong>Mang dữ liệu cũ sang:</strong> đọc mục 10 trước; nhập bản sao lưu thay bước tạo bảng và dữ liệu mẫu. Chỉ sao chép mã nguồn sẽ không mang theo database và ảnh đã tải lên.</p>
+<p>Các lệnh bên dưới giả định XAMPP nằm tại C:\xampp. Nếu khác, sửa đường dẫn tương ứng. Dự án đặt ở ổ Windows để Apache của Windows truy cập trực tiếp; không cần cài thêm PHP hay MySQL trong Ubuntu.</p>
+</section>
+<section id="s02" aria-labelledby="heading-s02"><div class="section-top"><span class="step">02</span><label class="done"><input type="checkbox" data-done="s02"> Đã đọc mục này</label></div><h2 id="heading-s02">Chuẩn bị mã nguồn và terminal</h2>
+<ol><li>Giải nén PixelNote-XAMPP-MySQL.zip vào C:\Projects.</li><li>Kiểm tra có file C:\Projects\pixelnote\public\index.php. Tránh lồng thêm một thư mục pixelnote ngoài ý muốn.</li><li>Mở VS Code → File → Open Folder → chọn thư mục pixelnote.</li><li>Chọn Terminal → New Terminal. Bấm mũi tên cạnh dấu cộng trong terminal rồi chọn Ubuntu WSL hoặc PowerShell.</li></ol>
+<p>Nếu VS Code đang mở ở chế độ Remote WSL, có thể dùng cửa sổ Windows Terminal riêng để mở PowerShell trên Windows. Hai terminal vẫn thao tác cùng thư mục dự án.</p>
+<div class="command shell shell-wsl"><div class="command-head"><span>Ubuntu WSL</span><button class="copy" type="button" data-copy="code1" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code1"><code>cd /mnt/c/Projects/pixelnote
+pwd
+ls public/index.php database/schema.sql scripts/install.php</code></pre></div>
+<div class="command shell shell-ps"><div class="command-head"><span>PowerShell</span><button class="copy" type="button" data-copy="code2" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code2"><code>Set-Location -LiteralPath 'C:\Projects\pixelnote'
+Get-Location
+Get-Item .\public\index.php, .\database\schema.sql, .\scripts\install.php</code></pre></div>
+<p><strong>Kết quả cần đạt:</strong> đứng đúng thư mục và tìm thấy cả ba file. Các lệnh dùng đường dẫn tương đối ở phần sau đều chạy từ thư mục này.</p>
+<h3>Kiểm tra WSL nếu cần</h3>
+<div class="command shell shell-wsl"><div class="command-head"><span>Ubuntu WSL</span><button class="copy" type="button" data-copy="code3" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code3"><code>wsl.exe --list --verbose
+uname -r</code></pre></div>
+<div class="command shell shell-ps"><div class="command-head"><span>PowerShell</span><button class="copy" type="button" data-copy="code4" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code4"><code>wsl.exe --list --verbose</code></pre></div>
+<p>Trong Ubuntu dùng wsl.exe. Lệnh wsl không có đuôi exe có thể gọi nhầm chương trình Linux khác. Trong WSL, ổ C tương ứng /mnt/c, ổ E tương ứng /mnt/e. Khi gọi PHP của Windows, wslpath -w chuyển đường dẫn file sang dạng Windows. [2]</p>
+<p>Nếu dự án ở E:\Projects\pixelnote, dùng /mnt/e/Projects/pixelnote trong Ubuntu và sửa đường dẫn Apache ở mục 07. Không sao chép phần dấu nhắc như PS C:\...&gt; hoặc ten@may:...$ vào lệnh.</p>
+</section>
+<section id="s03" aria-labelledby="heading-s03"><div class="section-top"><span class="step">03</span><label class="done"><input type="checkbox" data-done="s03"> Đã đọc mục này</label></div><h2 id="heading-s03">Kiểm tra MySQL Server và kết nối Workbench</h2>
+<p>Hướng dẫn này sử dụng MySQL đã được cấu hình thành dịch vụ Windows. Kiểm tra tên và trạng thái dịch vụ:</p>
+<div class="command shell shell-wsl"><div class="command-head"><span>Ubuntu WSL</span><button class="copy" type="button" data-copy="code5" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code5"><code>powershell.exe -NoProfile -Command &quot;Get-Service -Name '*MySQL*' | Format-Table Name,Status,DisplayName&quot;</code></pre></div>
+<div class="command shell shell-ps"><div class="command-head"><span>PowerShell</span><button class="copy" type="button" data-copy="code6" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code6"><code>Get-Service -Name '*MySQL*' | Format-Table Name,Status,DisplayName</code></pre></div>
+<p>Ghi lại tên trong cột Name, ví dụ MySQL80 hoặc MySQL84. Nếu trạng thái Stopped, mở PowerShell trên Windows bằng <strong>Run as administrator</strong>, rồi chạy lệnh sau với đúng tên dịch vụ.</p>
+<div class="command"><div class="command-head"><span>PowerShell Windows · Run as administrator</span><button class="copy" type="button" data-copy="code7" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code7"><code>Start-Service -Name 'MySQL80'
+Get-Service -Name 'MySQL80'</code></pre></div>
+<p>Start và Stop dịch vụ thường cần quyền quản trị Windows. sudo trong Ubuntu không cấp quyền quản trị Windows. Có thể mở ứng dụng Services trên Windows, chọn dịch vụ MySQL tương ứng rồi Start. [3]</p>
+<p>Nếu không thấy dịch vụ, kiểm tra MySQL Server đã thực sự được cài và hoàn tất cấu hình Windows Service trong bộ cài MySQL hoặc MySQL Configurator. Chỉ cài Workbench là chưa đủ. Nếu máy đang dùng instance chạy thủ công, cần xác định instance đó trước khi tạo thêm dịch vụ.</p>
+<h3>Tạo kết nối trong Workbench</h3>
+<p>Mở MySQL Workbench → dấu + cạnh MySQL Connections → nhập:</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">Trường</th><th scope="col">Giá trị</th></tr></thead><tbody><tr><td>Connection Name</td><td>PixelNote Local</td></tr><tr><td>Connection Method</td><td>Standard TCP/IP</td></tr><tr><td>Hostname</td><td>127.0.0.1</td></tr><tr><td>Port</td><td>3307 hoặc cổng thực tế</td></tr><tr><td>Username</td><td>root</td></tr><tr><td>Password</td><td>Mật khẩu root đã đặt trên máy mới</td></tr></tbody></table></div>
+<p>Bấm Test Connection, nhập mật khẩu nếu được hỏi, bấm OK rồi mở kết nối. Trong SQL tab, chạy:</p>
+<div class="command"><div class="command-head"><span>MySQL Workbench · SQL</span><button class="copy" type="button" data-copy="code8" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code8"><code>SELECT VERSION() AS mysql_version,
+       @@port AS mysql_port,
+       @@datadir AS data_directory;</code></pre></div>
+<p><strong>Kết quả cần đạt:</strong> kết nối được đến Oracle MySQL, không phải MariaDB; ghi lại cổng thực tế. Mã nguồn đã được kiểm thử với MySQL 8.0; tên MySQL80 trong tài liệu là ví dụ, không phải tên bắt buộc. [4]</p>
+</section>
+<section id="s04" aria-labelledby="heading-s04"><div class="section-top"><span class="step">04</span><label class="done"><input type="checkbox" data-done="s04"> Đã đọc mục này</label></div><h2 id="heading-s04">Kiểm tra PHP và thư mục lưu dữ liệu</h2>
+<p>Chạy tại thư mục dự án:</p>
+<div class="command shell shell-wsl"><div class="command-head"><span>Ubuntu WSL</span><button class="copy" type="button" data-copy="code9" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code9"><code>/mnt/c/xampp/php/php.exe -v
+/mnt/c/xampp/php/php.exe --ini
+/mnt/c/xampp/php/php.exe -m | grep -E 'PDO|pdo_mysql|mbstring|fileinfo'
+mkdir -p storage/uploads storage/logs storage/sessions storage/tmp</code></pre></div>
+<div class="command shell shell-ps"><div class="command-head"><span>PowerShell</span><button class="copy" type="button" data-copy="code10" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code10"><code>&amp; 'C:\xampp\php\php.exe' -v
+&amp; 'C:\xampp\php\php.exe' --ini
+&amp; 'C:\xampp\php\php.exe' -m | Select-String 'PDO|pdo_mysql|mbstring|fileinfo'
+New-Item -ItemType Directory -Force -Path .\storage\uploads, .\storage\logs, .\storage\sessions, .\storage\tmp | Out-Null</code></pre></div>
+<p><strong>Kết quả cần đạt:</strong> PHP 8.2 hoặc phiên bản tương thích mới hơn; có đủ PDO, pdo_mysql, mbstring và fileinfo. Các ví dụ gọi trực tiếp PHP của XAMPP để tránh nhầm PHP khác trong PATH.</p>
+<p>Nếu thiếu extension, mở file php.ini tại dòng <strong>Loaded Configuration File</strong> trong kết quả lệnh --ini. Với XAMPP mặc định thường là C:\xampp\php\php.ini. Bỏ dấu ; trước ba dòng sau nếu đang bị tắt; không thêm dòng trùng:</p>
+<div class="command"><div class="command-head"><span>Các dòng trong php.ini</span><button class="copy" type="button" data-copy="code11" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code11"><code>extension=pdo_mysql
+extension=mbstring
+extension=fileinfo</code></pre></div>
+<p>Lưu file rồi chạy lại lệnh kiểm tra. Nếu Apache đang chạy, Stop rồi Start Apache để nạp cấu hình. Khi CLI có extension nhưng web vẫn báo thiếu, kiểm tra file qua XAMPP → Config cạnh Apache → PHP php.ini.</p>
+<p>Trong PowerShell, dấu &amp; trước đường dẫn thực thi đặt trong nháy là cần thiết. Trong Ubuntu dùng đường dẫn /mnt/c/.../php.exe như ví dụ.</p>
+</section>
+<section id="s05" aria-labelledby="heading-s05"><div class="section-top"><span class="step">05</span><label class="done"><input type="checkbox" data-done="s05"> Đã đọc mục này</label></div><h2 id="heading-s05">Tạo database và các bảng trong Workbench</h2>
+<p>Thực hiện bằng kết nối root trong Workbench. Các lệnh sau dành cho database mới chưa có dữ liệu.</p>
+<p>Thay MAT_KHAU_RIENG_CUA_BAN bằng mật khẩu riêng cho ứng dụng, giống nhau ở cả hai dòng SQL. Đây là mật khẩu sẽ ghi vào config.local.php; không cần dùng mật khẩu root.</p>
+<div class="command"><div class="command-head"><span>MySQL Workbench · SQL</span><button class="copy" type="button" data-copy="code12" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code12"><code>CREATE DATABASE pixelnote
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+CREATE USER 'pixelnote_app'@'localhost'
+  IDENTIFIED BY 'MAT_KHAU_RIENG_CUA_BAN';
+
+CREATE USER 'pixelnote_app'@'127.0.0.1'
+  IDENTIFIED BY 'MAT_KHAU_RIENG_CUA_BAN';
+
+GRANT SELECT, INSERT, UPDATE, DELETE
+  ON pixelnote.* TO 'pixelnote_app'@'localhost';
+
+GRANT SELECT, INSERT, UPDATE, DELETE
+  ON pixelnote.* TO 'pixelnote_app'@'127.0.0.1';</code></pre></div>
+<p>Nếu database hoặc tài khoản đã tồn tại, kiểm tra thông tin hiện có trước khi tiếp tục; không xóa để chạy lại đoạn trên. Tài khoản ứng dụng chỉ đọc và ghi dữ liệu. Việc tạo bảng dùng root trong Workbench.</p>
+<h3>Cài mới với dữ liệu mẫu</h3>
+<ol><li>Refresh mục Schemas ở thanh bên. Nhấp đúp pixelnote để tên in đậm, tức schema mặc định.</li><li>Chọn File → Open SQL Script, mở C:\Projects\pixelnote\database\schema.sql.</li><li>Bảo đảm schema mặc định là pixelnote. Không bôi đen riêng một đoạn; bấm nút tia sét Execute All or Selection để chạy toàn bộ file.</li><li>Kiểm tra Action Output không có lỗi đỏ, rồi Refresh mục Tables.</li></ol>
+<p>Chạy câu sau để kiểm tra:</p>
+<div class="command"><div class="command-head"><span>MySQL Workbench · SQL</span><button class="copy" type="button" data-copy="code13" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code13"><code>SHOW TABLES FROM pixelnote;</code></pre></div>
+<p>Bản mã nguồn hiện tại có 12 bảng, gồm users, projects, versions, threads và các bảng liên quan.</p>
+<p><strong>Nếu chuyển dữ liệu cũ:</strong> tạo database trống và tài khoản như trên, sau đó nhập file SQL theo mục 10. Bỏ bước chạy schema.sql và bỏ lệnh tạo dữ liệu mẫu.</p>
+</section>
+<section id="s06" aria-labelledby="heading-s06"><div class="section-top"><span class="step">06</span><label class="done"><input type="checkbox" data-done="s06"> Đã đọc mục này</label></div><h2 id="heading-s06">Tạo cấu hình và kiểm tra kết nối của ứng dụng</h2>
+<p>Trong VS Code, tạo file config.local.php ở thư mục gốc pixelnote, cùng cấp với thư mục public. Toàn bộ nội dung file:</p>
+<div class="command"><div class="command-head"><span>File config.local.php</span><button class="copy" type="button" data-copy="code14" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code14"><code>&lt;?php
+declare(strict_types=1);
+
+return [
+    'host' =&gt; '127.0.0.1',
+    'port' =&gt; 3307,
+    'database' =&gt; 'pixelnote',
+    'username' =&gt; 'pixelnote_app',
+    'password' =&gt; 'MAT_KHAU_RIENG_CUA_BAN',
+    'secure_cookies' =&gt; false,
+];</code></pre></div>
+<p>Thay port và password bằng thông tin đã xác nhận. Lưu dạng <strong>UTF-8 không BOM</strong>, không có ký tự trước &lt;?php. Mật khẩu phải khớp với mục 05. Nếu mật khẩu có dấu nháy đơn hoặc gạch chéo ngược, cần escape đúng cú pháp SQL và PHP; để dễ thao tác, có thể dùng mật khẩu dài với chữ, số và các ký hiệu như ! @ # _.</p>
+<div class="command shell shell-wsl"><div class="command-head"><span>Ubuntu WSL</span><button class="copy" type="button" data-copy="code15" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code15"><code>/mnt/c/xampp/php/php.exe -l &quot;$(wslpath -w &quot;$PWD/config.local.php&quot;)&quot;
+/mnt/c/xampp/php/php.exe &quot;$(wslpath -w &quot;$PWD/scripts/database-status.php&quot;)&quot;</code></pre></div>
+<div class="command shell shell-ps"><div class="command-head"><span>PowerShell</span><button class="copy" type="button" data-copy="code16" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code16"><code>&amp; 'C:\xampp\php\php.exe' -l .\config.local.php
+&amp; 'C:\xampp\php\php.exe' .\scripts\database-status.php</code></pre></div>
+<p><strong>Kết quả cần đạt:</strong> không có lỗi cú pháp, connected là true. Ví dụ:</p>
+<div class="command"><div class="command-head"><span>Kết quả mẫu</span><button class="copy" type="button" data-copy="code17" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code17"><code>{&quot;host&quot;:&quot;127.0.0.1&quot;,&quot;port&quot;:3307,&quot;database&quot;:&quot;pixelnote&quot;,&quot;connected&quot;:true}</code></pre></div>
+<p>connected:true xác nhận kết nối database, chưa xác nhận đầy đủ bảng, ảnh hoặc hoạt động website. Không chia sẻ file cấu hình chứa mật khẩu lên nhóm hoặc GitHub.</p>
+<h3>Thêm dữ liệu mẫu khi cài mới</h3>
+<p>Chỉ chạy sau khi đã tạo đủ bảng. Nếu nhập database từ máy cũ, bỏ qua lệnh này.</p>
+<div class="command shell shell-wsl"><div class="command-head"><span>Ubuntu WSL</span><button class="copy" type="button" data-copy="code18" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code18"><code>/mnt/c/xampp/php/php.exe &quot;$(wslpath -w &quot;$PWD/scripts/install.php&quot;)&quot;</code></pre></div>
+<div class="command shell shell-ps"><div class="command-head"><span>PowerShell</span><button class="copy" type="button" data-copy="code19" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code19"><code>&amp; 'C:\xampp\php\php.exe' .\scripts\install.php</code></pre></div>
+<p><strong>Không thêm --local hoặc --schema.</strong> Database, tài khoản và bảng đã được tạo qua Workbench. Lệnh mặc định thêm dữ liệu mẫu; --local thuộc cơ chế instance riêng của bộ cài cũ.</p>
+<p>Kết quả cần có dòng OK: MySQL, schema va du lieu mau da san sang.</p>
+</section>
+<section id="s07" aria-labelledby="heading-s07"><div class="section-top"><span class="step">07</span><label class="done"><input type="checkbox" data-done="s07"> Đã đọc mục này</label></div><h2 id="heading-s07">Cấu hình Apache của XAMPP</h2>
+<p>Alias /pixelnote trỏ đến thư mục public. Dự án có thể nằm ngoài htdocs; Apache hỗ trợ ánh xạ này bằng Alias. [5]</p>
+<h3>Sao lưu trước khi sửa</h3>
+<div class="command shell shell-wsl"><div class="command-head"><span>Ubuntu WSL</span><button class="copy" type="button" data-copy="code20" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code20"><code>for file in \
+  /mnt/c/xampp/apache/conf/httpd.conf \
+  /mnt/c/xampp/apache/conf/extra/httpd-pixelnote.conf
+do
+  if [ -f &quot;$file&quot; ]; then
+    cp -- &quot;$file&quot; &quot;$file.backup-$(date +%Y%m%d-%H%M%S)&quot;
+  fi
+done</code></pre></div>
+<div class="command shell shell-ps"><div class="command-head"><span>PowerShell</span><button class="copy" type="button" data-copy="code21" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code21"><code>$stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+$files = @(
+    'C:\xampp\apache\conf\httpd.conf'
+    'C:\xampp\apache\conf\extra\httpd-pixelnote.conf'
+)
+foreach ($file in $files) {
+    if (Test-Path -LiteralPath $file) {
+        Copy-Item -LiteralPath $file -Destination ($file + '.backup-' + $stamp)
+    }
+}</code></pre></div>
+<h3>Tạo file alias đầy đủ</h3>
+<p>Dùng VS Code hoặc trình soạn thảo tạo C:\xampp\apache\conf\extra\httpd-pixelnote.conf. Lưu UTF-8 không BOM. Nếu thư mục dự án khác ví dụ, thay tất cả C:/Projects/pixelnote bằng vị trí thực tế, dùng dấu /.</p>
+<div class="command"><div class="command-head"><span>File httpd-pixelnote.conf</span><button class="copy" type="button" data-copy="code22" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code22"><code>Alias &quot;/pixelnote&quot; &quot;C:/Projects/pixelnote/public&quot;
+
+&lt;Directory &quot;C:/Projects/pixelnote&quot;&gt;
+    AllowOverride None
+    Require all denied
+&lt;/Directory&gt;
+
+&lt;Directory &quot;C:/Projects/pixelnote/public&quot;&gt;
+    Options -Indexes +FollowSymLinks
+    AllowOverride None
+    DirectoryIndex index.php
+    Require local
+
+    &lt;IfModule php_module&gt;
+        php_admin_value upload_tmp_dir &quot;C:/Projects/pixelnote/storage/tmp&quot;
+        php_admin_value upload_max_filesize &quot;15M&quot;
+        php_admin_value post_max_size &quot;17M&quot;
+        php_admin_flag display_errors Off
+        php_admin_flag log_errors On
+    &lt;/IfModule&gt;
+&lt;/Directory&gt;</code></pre></div>
+<p>Require local chỉ cho truy cập từ chính máy chạy. “Chạy trên máy khác” ở đây là cài một bản trên máy đó; hướng dẫn này chưa cấu hình truy cập qua mạng LAN.</p>
+<h3>Nạp file alias vào cấu hình chính</h3>
+<p>Chạy một trong hai khối sau. Lệnh chỉ thêm Include khi chưa có dòng tương ứng, không thay toàn bộ httpd.conf.</p>
+<div class="command shell shell-wsl"><div class="command-head"><span>Ubuntu WSL</span><button class="copy" type="button" data-copy="code23" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code23"><code>apache_conf=&quot;/mnt/c/xampp/apache/conf/httpd.conf&quot;
+if ! grep -Eq '^[[:space:]]*Include(Optional)?[[:space:]]+&quot;?conf/extra/httpd-pixelnote\.conf&quot;?[[:space:]]*$' &quot;$apache_conf&quot;; then
+  printf '\nInclude &quot;conf/extra/httpd-pixelnote.conf&quot;\n' &gt;&gt; &quot;$apache_conf&quot;
+fi</code></pre></div>
+<div class="command shell shell-ps"><div class="command-head"><span>PowerShell</span><button class="copy" type="button" data-copy="code24" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code24"><code>$apacheConf = 'C:\xampp\apache\conf\httpd.conf'
+$pattern = '(?m)^[ \t]*Include(?:Optional)?[ \t]+&quot;?conf/extra/httpd-pixelnote\.conf&quot;?[ \t]*\r?$'
+$content = [System.IO.File]::ReadAllText($apacheConf)
+if ($content -notmatch $pattern) {
+    $line = [Environment]::NewLine + 'Include &quot;conf/extra/httpd-pixelnote.conf&quot;' + [Environment]::NewLine
+    $utf8 = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::AppendAllText($apacheConf, $line, $utf8)
+}</code></pre></div>
+<p>Nếu báo Permission denied hoặc Access denied khi ghi file XAMPP, mở trình soạn thảo hoặc PowerShell trên Windows bằng Run as administrator để thực hiện phần cấu hình này. sudo trong Ubuntu không thay thế quyền quản trị Windows.</p>
+<h3>Kiểm tra cú pháp</h3>
+<div class="command shell shell-wsl"><div class="command-head"><span>Ubuntu WSL</span><button class="copy" type="button" data-copy="code25" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code25"><code>/mnt/c/xampp/apache/bin/httpd.exe -t -f &quot;C:/xampp/apache/conf/httpd.conf&quot;</code></pre></div>
+<div class="command shell shell-ps"><div class="command-head"><span>PowerShell</span><button class="copy" type="button" data-copy="code26" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code26"><code>&amp; 'C:\xampp\apache\bin\httpd.exe' -t -f 'C:\xampp\apache\conf\httpd.conf'</code></pre></div>
+<p><strong>Chỉ tiếp tục khi có Syntax OK.</strong> Nếu lỗi, sửa đúng file và dòng được báo rồi kiểm tra lại. Nếu cần quay lại, khôi phục bản sao lưu httpd.conf và alias cũ vừa tạo, sau đó kiểm tra lại cú pháp.</p>
+</section>
+<section id="s08" aria-labelledby="heading-s08"><div class="section-top"><span class="step">08</span><label class="done"><input type="checkbox" data-done="s08"> Đã đọc mục này</label></div><h2 id="heading-s08">Mở website và kiểm tra chức năng</h2>
+<ol><li>Mở XAMPP Control Panel từ Start của Windows.</li><li>Bấm Start ở dòng Apache. Nếu Apache đã chạy, bấm Stop rồi Start để nạp cấu hình mới.</li><li>Không bật dòng MySQL của XAMPP cho dự án này.</li><li>Mở trình duyệt Windows tại <a href="http://localhost/pixelnote/.">http://localhost/pixelnote/.</a></li></ol>
+<p>Có thể mở Control Panel từ terminal:</p>
+<div class="command shell shell-wsl"><div class="command-head"><span>Ubuntu WSL</span><button class="copy" type="button" data-copy="code27" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code27"><code>/mnt/c/xampp/xampp-control.exe</code></pre></div>
+<div class="command shell shell-ps"><div class="command-head"><span>PowerShell</span><button class="copy" type="button" data-copy="code28" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code28"><code>Start-Process -FilePath 'C:\xampp\xampp-control.exe' -WorkingDirectory 'C:\xampp'</code></pre></div>
+<p>Lệnh mở bảng điều khiển để bạn trực tiếp bấm Start hoặc Stop. Nếu terminal Ubuntu đang chờ ứng dụng, mở thêm một tab terminal để làm việc.</p>
+<h3>Tài khoản mẫu khi cài mới</h3>
+<div class="table-wrap"><table><thead><tr><th scope="col">Vai trò</th><th scope="col">Email</th><th scope="col">Mật khẩu</th></tr></thead><tbody><tr><td>Chủ dự án mẫu</td><td>designer@pixelnote.test</td><td>Designer123!</td></tr><tr><td>Người góp ý</td><td>reviewer@pixelnote.test</td><td>Reviewer123!</td></tr><tr><td>Người chỉ xem</td><td>viewer@pixelnote.test</td><td>Viewer123!</td></tr></tbody></table></div>
+<p>Các tài khoản trên chỉ áp dụng nếu đã tạo dữ liệu mẫu. Khi chuyển dữ liệu cũ, sử dụng tài khoản cũ.</p>
+<h3>Kiểm tra sau cài đặt</h3>
+<ul><li>Đăng nhập, tạo một dự án thử và tải ảnh PNG hoặc JPEG.</li><li>Thêm người góp ý; xác nhận tài khoản chỉ xem không tạo được góp ý.</li><li>Tạo góp ý đầu tiên ở một phiên bản mới: hiển thị số 1; góp ý tiếp theo hiển thị số 2.</li><li>Tải phiên bản mới: góp ý cũ vẫn thuộc phiên bản cũ; góp ý đầu tiên của phiên bản mới bắt đầu từ 1.</li><li>Chọn hai phiên bản khác nhau để so sánh và kéo thanh chia. Với ảnh khác tỷ lệ, kiểm tra giao diện so sánh cạnh nhau.</li><li>Tải lại trang, đăng nhập lại nếu cần và xác nhận dữ liệu đã lưu.</li></ul>
+<p>Đây là các bước tự kiểm tra trên máy mới, không phải kết quả đã được xác nhận trên máy đó.</p>
+</section>
+<section id="s09" aria-labelledby="heading-s09"><div class="section-top"><span class="step">09</span><label class="done"><input type="checkbox" data-done="s09"> Đã đọc mục này</label></div><h2 id="heading-s09">Bật và dừng khi sử dụng hằng ngày</h2>
+<p>Không chạy lại bước tạo database, nhập schema hoặc tạo dữ liệu mẫu mỗi lần mở website.</p>
+<h3>Khi cần chạy</h3>
+<ol><li>Kiểm tra dịch vụ Oracle MySQL đang Running. Nếu đã đặt tự khởi động cùng Windows thì thường không cần bật lại.</li><li>Mở XAMPP Control Panel và Start Apache.</li><li>Truy cập <a href="http://localhost/pixelnote/.">http://localhost/pixelnote/.</a></li></ol>
+<p>Có thể kiểm tra kết nối từ thư mục dự án:</p>
+<div class="command shell shell-wsl"><div class="command-head"><span>Ubuntu WSL</span><button class="copy" type="button" data-copy="code29" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code29"><code>/mnt/c/xampp/php/php.exe &quot;$(wslpath -w &quot;$PWD/scripts/database-status.php&quot;)&quot;</code></pre></div>
+<div class="command shell shell-ps"><div class="command-head"><span>PowerShell</span><button class="copy" type="button" data-copy="code30" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code30"><code>&amp; 'C:\xampp\php\php.exe' .\scripts\database-status.php</code></pre></div>
+<h3>Khi dùng xong</h3>
+<p>Bấm <strong>Stop Apache</strong> trong XAMPP. Khi nút trở về Start, tải lại website để xác nhận không truy cập được. Dừng Apache sẽ dừng cả các website khác đang dùng chung Apache đó. MySQL vẫn chạy để Workbench có thể tiếp tục kết nối. [1]</p>
+<p>Đóng tab trình duyệt hoặc thoát VS Code không đồng nghĩa với dừng Apache. Bấm Quit trong XAMPP Control Panel cũng không nên dùng thay thao tác Stop Apache.</p>
+<p>Nếu muốn dừng cả MySQL, mở PowerShell trên Windows bằng Run as administrator, dùng đúng tên dịch vụ:</p>
+<div class="command"><div class="command-head"><span>PowerShell Windows · Run as administrator</span><button class="copy" type="button" data-copy="code31" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code31"><code>Stop-Service -Name 'MySQL80'
+Get-Service -Name 'MySQL80'</code></pre></div>
+<p>Lần sau khởi động lại:</p>
+<div class="command"><div class="command-head"><span>PowerShell Windows · Run as administrator</span><button class="copy" type="button" data-copy="code32" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code32"><code>Start-Service -Name 'MySQL80'
+Get-Service -Name 'MySQL80'</code></pre></div>
+<p>Dừng dịch vụ không xóa database, nhưng sẽ ngắt ứng dụng và Workbench dùng chung dịch vụ đó. Hãy hoàn tất thao tác đang làm trước khi dừng.</p>
+</section>
+<section id="s10" aria-labelledby="heading-s10"><div class="section-top"><span class="step">10</span><label class="done"><input type="checkbox" data-done="s10"> Đã đọc mục này</label></div><h2 id="heading-s10">Chuyển dữ liệu từ máy cũ sang máy mới</h2>
+<p>Bạn cần cả bản sao database và thư mục ảnh. ZIP mã nguồn phát hành không chứa database cá nhân, config.local.php hay ảnh đã tải lên.</p>
+<h3>Trên máy cũ</h3>
+<ol><li>Dừng Apache để không có thay đổi dữ liệu trong lúc sao lưu; giữ MySQL chạy.</li><li>Mở Workbench và kết nối đúng instance đang chứa pixelnote. Với cách cài cũ của dự án, đó có thể là instance riêng ở cổng 3307.</li><li>Chọn Server → Data Export → chọn schema pixelnote và toàn bộ bảng.</li><li>Chọn Dump Structure and Data và Export to Self-Contained File. Ghi file SQL vào nơi bạn tìm lại được.</li><li>Bấm Start Export và chờ hoàn tất, kiểm tra không có lỗi. [6]</li><li>Sao chép toàn bộ thư mục storage/uploads của dự án. Đặt bản sao SQL và thư mục ảnh cùng một bộ sao lưu.</li></ol>
+<p>Nếu MySQL trên máy cũ đang dừng và dùng .runtime/my.ini, cần khởi động đúng instance cũ trước khi xuất. Việc sao chép thẳng thư mục .runtime/mysql-data không phải cách chuyển dữ liệu trong hướng dẫn này.</p>
+<h3>Trên máy mới</h3>
+<ol><li>Chuẩn bị mã nguồn sạch và tạo thư mục storage như mục 02 và 04.</li><li>Kết nối Oracle MySQL của máy mới bằng Workbench. Tạo database pixelnote trống và tài khoản ứng dụng theo mục 05.</li><li>Bỏ bước chạy schema.sql. Chọn Server → Data Import → Import from Self-Contained File, chọn SQL vừa xuất.</li><li>Chọn Default Target Schema là pixelnote, bấm Start Import và kiểm tra kết quả. Chỉ nhập vào database mới trống; file sao lưu có thể chứa lệnh thay thế bảng. [6]</li><li>Chép các file ảnh từ bản sao storage/uploads vào storage/uploads của dự án mới, giữ nguyên tên file.</li><li>Tạo config.local.php theo tài khoản và cổng của máy mới. Không dùng nguyên mật khẩu hoặc đường dẫn cấu hình máy cũ nếu đã thay đổi.</li><li>Bỏ lệnh thêm dữ liệu mẫu. Tiếp tục cấu hình Apache và mở web.</li><li>Đăng nhập bằng tài khoản cũ, mở một vài ảnh, phiên bản và góp ý để xác nhận dữ liệu.</li></ol>
+<p>Không chép .runtime, file PID hoặc phiên đăng nhập storage/sessions sang máy mới trong quy trình này. Không cần giữ nguyên ổ E hay đường dẫn cũ; cần sửa alias Apache theo vị trí mới.</p>
+</section>
+<section id="s11" aria-labelledby="heading-s11"><div class="section-top"><span class="step">11</span><label class="done"><input type="checkbox" data-done="s11"> Đã đọc mục này</label></div><h2 id="heading-s11">Xử lý các lỗi thường gặp</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">Hiện tượng</th><th scope="col">Kiểm tra và hướng xử lý</th></tr></thead><tbody><tr><td>wsl --list báo Wsman hoặc Unknown command</td><td>Trong Ubuntu dùng wsl.exe --list --verbose</td></tr><tr><td>Không tìm thấy php.exe hoặc file PHP</td><td>Kiểm tra vị trí XAMPP, thư mục hiện tại và dùng wslpath -w khi gọi file từ WSL</td></tr><tr><td>Thiếu pdo_mysql</td><td>Kiểm tra đúng php.ini, bật extension rồi kiểm tra lại; restart Apache</td></tr><tr><td>connected:false</td><td>Kiểm tra dịch vụ, cổng, database, username và password; chưa chạy lại trình cài đặt</td></tr><tr><td>Access denied for user</td><td>Sai tài khoản, mật khẩu hoặc quyền host; đối chiếu mục 05 và config.local.php</td></tr><tr><td>Unknown database pixelnote</td><td>Kết nối nhầm instance hoặc chưa tạo database trên server đó</td></tr><tr><td>No database selected trong Workbench</td><td>Nhấp đúp pixelnote ở Schemas để đặt schema mặc định, rồi chạy lại file tạo bảng</td></tr><tr><td>Database hoặc user already exists</td><td>Kiểm tra dữ liệu và tài khoản hiện có; không xóa để tạo lại</td></tr><tr><td>404 tại /pixelnote/</td><td>Kiểm tra Alias, dòng Include và đường dẫn public; Stop rồi Start Apache</td></tr><tr><td>Apache không Start</td><td>Chạy httpd.exe -t, xem error.log và kiểm tra cổng 80 hoặc 443 đang được dùng</td></tr><tr><td>Lỗi 500 hoặc trang trắng</td><td>Xem storage/logs/php.log và log Apache; không bật hiển thị lỗi trên web để thay việc đọc log</td></tr><tr><td>Không lưu được ảnh hoặc phiên đăng nhập</td><td>Kiểm tra các thư mục storage có tồn tại và tài khoản chạy Apache có quyền ghi</td></tr><tr><td>Sau chuyển máy mất ảnh nhưng còn góp ý</td><td>Kiểm tra đã chép đầy đủ storage/uploads và giữ nguyên tên file</td></tr><tr><td>Vẫn thấy trang sau khi Stop Apache</td><td>Tải lại trang, kiểm tra đúng URL và có server khác đang phục vụ cổng đó hay không</td></tr></tbody></table></div>
+<h3>Kiểm tra cổng MySQL từ phía Windows</h3>
+<p>Dùng cổng thực tế của server. Khi ở WSL, gọi PowerShell Windows để tránh nhầm localhost giữa Linux và Windows.</p>
+<div class="command shell shell-wsl"><div class="command-head"><span>Ubuntu WSL</span><button class="copy" type="button" data-copy="code33" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code33"><code>powershell.exe -NoProfile -Command 'Test-NetConnection -ComputerName 127.0.0.1 -Port 3307 -InformationLevel Quiet'</code></pre></div>
+<div class="command shell shell-ps"><div class="command-head"><span>PowerShell</span><button class="copy" type="button" data-copy="code34" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code34"><code>Test-NetConnection -ComputerName 127.0.0.1 -Port 3307 -InformationLevel Quiet</code></pre></div>
+<p>True chỉ cho biết cổng nhận kết nối TCP. Muốn xác nhận đúng database và tài khoản ứng dụng, chạy database-status.php.</p>
+<h3>Đọc log gần nhất</h3>
+<div class="command shell shell-wsl"><div class="command-head"><span>Ubuntu WSL</span><button class="copy" type="button" data-copy="code35" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code35"><code>tail -n 40 storage/logs/php.log
+tail -n 40 /mnt/c/xampp/apache/logs/error.log</code></pre></div>
+<div class="command shell shell-ps"><div class="command-head"><span>PowerShell</span><button class="copy" type="button" data-copy="code36" aria-label="Sao chép khối lệnh">Sao chép</button></div><pre id="code36"><code>Get-Content -LiteralPath .\storage\logs\php.log -Tail 40
+Get-Content -LiteralPath 'C:\xampp\apache\logs\error.log' -Tail 40</code></pre></div>
+<p>Nếu file log chưa tồn tại, hệ thống có thể chưa ghi lỗi vào đó. Khi gửi lỗi để hỗ trợ, gửi thông báo liên quan và che mật khẩu; không gửi toàn bộ config.local.php hoặc .runtime/install.json.</p>
+<p>Nếu cổng 80 bận, kiểm tra ứng dụng chiếm cổng trước; không dừng ngẫu nhiên tiến trình khác. Nếu Apache đã được cấu hình dùng cổng 8080, URL phải là <a href="http://localhost:8080/pixelnote/.">http://localhost:8080/pixelnote/.</a></p>
+</section>
+<section id="s12" aria-labelledby="heading-s12"><div class="section-top"><span class="step">12</span><label class="done"><input type="checkbox" data-done="s12"> Đã đọc mục này</label></div><h2 id="heading-s12">Danh sách xác nhận và tài liệu tham khảo</h2>
+<ul><li>Đã xác nhận đúng thư mục dự án và đúng PHP của XAMPP.</li><li>Đã bật đủ PDO, pdo_mysql, mbstring và fileinfo.</li><li>Workbench kết nối đúng Oracle MySQL và xác nhận đúng cổng.</li><li>Có database pixelnote và các bảng; tài khoản ứng dụng có quyền cần thiết.</li><li>database-status.php trả connected:true.</li><li>Apache báo Syntax OK và đang chạy.</li><li>Truy cập được website, đăng nhập và tải ảnh thành công.</li><li>Dữ liệu vẫn còn sau khi dừng và bật lại.</li><li>Đã biết cách sao lưu cả SQL và storage/uploads.</li></ul>
+<p>Hướng dẫn này áp dụng cho bản PixelNote-XAMPP-MySQL của dự án, với các file scripts/install.php, scripts/database-status.php, config.example.php và cấu hình alias trong scripts/xampp-common.ps1. Cập nhật ngày 30 tháng 10 năm 2026.</p>
+<p>[1] Apache Friends — XAMPP Windows FAQ: <a href="https://www.apachefriends.org/faq_windows.html">https://www.apachefriends.org/faq_windows.html</a></p>
+<p>[2] Microsoft — Làm việc giữa WSL và Windows: <a href="https://learn.microsoft.com/en-us/windows/wsl/interop">https://learn.microsoft.com/en-us/windows/wsl/interop</a></p>
+<p>[3] Microsoft — Start-Service và quyền quản trị: <a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/start-service">https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/start-service</a></p>
+<p>[4] MySQL — Kết nối Workbench bằng TCP/IP: <a href="https://dev.mysql.com/doc/workbench/en/wb-mysql-connections-methods-standard.html">https://dev.mysql.com/doc/workbench/en/wb-mysql-connections-methods-standard.html</a></p>
+<p>[5] Apache — Cấu hình Alias: <a href="https://httpd.apache.org/docs/2.4/mod/mod_alias.html">https://httpd.apache.org/docs/2.4/mod/mod_alias.html</a></p>
+<p>[6] MySQL — SQL Data Export and Import Wizard: <a href="https://dev.mysql.com/doc/workbench/en/wb-admin-export-import-management.html">https://dev.mysql.com/doc/workbench/en/wb-admin-export-import-management.html</a></p>
+</section><footer>Tài liệu mở trực tiếp bằng trình duyệt, không cần bật localhost để đọc. Nút sao chép chỉ sao chép văn bản, không chạy lệnh. Khi in, cả Ubuntu WSL và PowerShell đều được hiển thị.</footer></main></div><div id="notice" role="status" aria-live="polite"></div><script>
+(function(){
+  var storageKey='pixelnote-guide-v1';
+  var mode='wsl', saved={};
+  try{saved=JSON.parse(localStorage.getItem(storageKey)||'{}');}catch(e){}
+  function persist(){try{localStorage.setItem(storageKey,JSON.stringify(saved));}catch(e){}}
+  function setMode(value){
+    if(['wsl','ps','all'].indexOf(value)<0)value='wsl';
+    mode=value;document.body.dataset.mode=value;saved.mode=value;
+    document.querySelectorAll('[data-mode-button]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.modeButton===value));});
+    persist();
+  }
+  document.querySelectorAll('[data-mode-button]').forEach(function(b){b.addEventListener('click',function(){setMode(b.dataset.modeButton);});});
+  setMode(saved.mode||'wsl');
+  function updateProgress(){
+    var items=Array.from(document.querySelectorAll('[data-done]'));
+    document.getElementById('progress-count').textContent=items.filter(function(x){return x.checked;}).length+' / '+items.length+' mục đã đọc';
+  }
+  document.querySelectorAll('[data-done]').forEach(function(box){
+    box.checked=!!(saved.done&&saved.done[box.dataset.done]);
+    box.addEventListener('change',function(){saved.done=saved.done||{};saved.done[box.dataset.done]=box.checked;persist();updateProgress();});
+  });updateProgress();
+  var noticeTimer;
+  function notify(message){var el=document.getElementById('notice');el.textContent=message;clearTimeout(noticeTimer);noticeTimer=setTimeout(function(){el.textContent='';},2400);}
+  function fallbackCopy(value){
+    var area=document.createElement('textarea');area.value=value;area.style.position='fixed';area.style.top='-1000px';
+    document.body.appendChild(area);area.focus();area.select();
+    var ok=document.execCommand('copy');area.remove();if(!ok)throw Error('copy unavailable');
+  }
+  document.querySelectorAll('[data-copy]').forEach(function(button){
+    button.addEventListener('click',async function(){
+      var target=document.getElementById(button.dataset.copy),value=target.textContent;
+      try{
+        try{if(!navigator.clipboard)throw Error('clipboard unavailable');await navigator.clipboard.writeText(value);}catch(e){fallbackCopy(value);}
+        notify('Đã sao chép khối lệnh');button.focus();
+      }catch(e){
+        var range=document.createRange();range.selectNodeContents(target);
+        var sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);
+        notify('Đã chọn nội dung. Nhấn Ctrl+C để sao chép.');
+      }
+    });
+  });
+  document.getElementById('print').addEventListener('click',function(){window.print();});
+  if('IntersectionObserver' in window){
+    var observer=new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){if(entry.isIntersecting){
+        document.querySelectorAll('nav a').forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+entry.target.id);});
+      }});
+    },{rootMargin:'-110px 0px -65% 0px',threshold:0});
+    document.querySelectorAll('section').forEach(function(s){observer.observe(s);});
+  }
+})();</script></body></html>
